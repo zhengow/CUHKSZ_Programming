@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Nov 28 00:20:34 2019
+
+@author: Asus
+"""
+import numpy as np
+import talib
+
+def double_ma(data,stock_list,fast_window,slow_window):
+    '''signal = [long=+1/short=-1,amount] '''
+    close=data['close']
+    signal = close.copy()
+
+    for stock in stock_list:
+        fm = talib.SMA(close[stock],fast_window)
+        sm = talib.SMA(close[stock],slow_window)
+        nan = np.isnan(sm)
+        for i in range(0,np.size(fm)):
+            if(nan[i]==True):
+                signal[stock][i]=0
+            else:
+                if(fm[i]>sm[i]):
+                    signal[stock][i]=10000
+                else:
+                    signal[stock][i]=-10000
+    return signal
